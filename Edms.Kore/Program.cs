@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Edms.Kore.ElasticSearch;
+using Nest;
+using System;
 using System.Data.Entity;
 using System.IO;
 using System.Security.Cryptography;
@@ -6,10 +8,39 @@ using System.Text;
 
 namespace Edms.Kore
 {
+    [ElasticsearchType(Name="ocr_document")]
+    public class OCR_DocumentType
+    {
+        [Text] public string FileHash { get; set; }
+        [Text] public string Folder { get; set; }
+        [Text] public string FileName { get; set; }
+        [Text] public string Content { get; set; }
+    }
+
     public class Program
     {
-     
         public static void Main(string[] args)
+        {
+            //PopulateDatabase();
+            ElasticSearch.ElasticClient.Initialize();
+            var ec = new ElasticSearch.ElasticClient();
+            var elastic_service = new ElasticService(ec);
+
+            //var db_context = new ElasticSearchProxyEntities();
+
+            //var k = db_context.Documents;
+            //foreach(var k1 in k)
+            //{
+            //    elastic_service.Index(k1);
+            //}
+
+            var k = elastic_service.Search("blue");
+
+
+            Console.ReadKey();
+        }
+
+        private static void PopulateDatabase()
         {
             var db_context = new ElasticSearchProxyEntities();
 
@@ -42,9 +73,8 @@ namespace Edms.Kore
                     }
                 }
             }
-
-            Console.ReadKey();
         }
+
 
         public static string CalculateMD5Hash(string input)
         {
@@ -64,5 +94,34 @@ namespace Edms.Kore
 
             return sb.ToString();
         }
+
+
+        //public static void Initialize()
+        //{
+        //    var _indexName = "cfw_documents";
+
+        //    var _elastic = GetClient();
+
+        //    _elastic.CreateIndex(
+        //        _indexName, 
+        //        i => i
+        //            .Settings(s => s
+        //                .Setting("number_of_shards", 1)
+        //                .Setting("number_of_replicas", 0)));
+
+
+        //    _elastic.Map<OCR_Document>(x => x
+        //        .Index(_indexName)
+        //        .AutoMap());
+        //}
+
+
+        //public static IElasticClient GetClient()
+        //{
+        //    var urlString = new Uri("http://localhost:9200");
+        //    var settings = new ConnectionSettings(urlString).DisableDirectStreaming();
+
+        //    return new Nest.ElasticClient(settings);
+        //}
     }
 }
