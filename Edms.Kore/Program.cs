@@ -21,16 +21,17 @@ namespace Edms.Kore
 
             IndexElasticSearch();
 
-            var searchResult = elastic_service.Search("blue");
+            var string_query = "water";
+            var searchResult = elastic_service.Search(string_query);
 
             foreach (var result in searchResult)
             {
                 Console.WriteLine($"----{result.FileName}");
-                var found_location = result.Content.IndexOf("blue");
+                var found_location = result.Content.IndexOf(string_query);
                 do
                 {
-                    Console.WriteLine($"  Exists @ : {found_location} : {result.Content.Substring(found_location - 10, 20)}");
-                    found_location = result.Content.IndexOf("blue", found_location+1);
+                    Console.WriteLine($"  Exists @ : {found_location} : {result.Content.Substring(found_location - 15, 30)}");
+                    found_location = result.Content.IndexOf(string_query, found_location+1);
                 }
                 while (found_location > 0);
             }
