@@ -23,6 +23,18 @@ namespace Edms.Kore
 
             var searchResult = elastic_service.Search("blue");
 
+            foreach (var result in searchResult)
+            {
+                Console.WriteLine($"----{result.FileName}");
+                var found_location = result.Content.IndexOf("blue");
+                do
+                {
+                    Console.WriteLine($"  Exists @ : {found_location} : {result.Content.Substring(found_location - 10, 20)}");
+                    found_location = result.Content.IndexOf("blue", found_location+1);
+                }
+                while (found_location > 0);
+            }
+
             Console.ReadKey();
         }
 
