@@ -1,5 +1,6 @@
-﻿using Nest;
-using System;
+﻿using System;
+using Nest;
+using Edms.Kore.Model;
 
 namespace Edms.Kore.ElasticSearch
 {
@@ -61,8 +62,9 @@ namespace Edms.Kore.ElasticSearch
                     .Type(TextQueryType.MostFields)
                     .Fields(f => f
                         .Field(ff => ff.Content, boost: 3)
-                        .Field(ff => ff.FileName, boost: 2)
-                        .Field(ff => ff.Folder, boost: 1)));
+                        //.Field(ff => ff.FileName, boost: 2)
+                        //.Field(ff => ff.Folder, boost: 1)
+                    ));
 
             return query;
         }

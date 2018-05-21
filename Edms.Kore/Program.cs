@@ -1,30 +1,20 @@
-﻿using Edms.Kore.ElasticSearch;
-using Nest;
-using System;
-using System.Data.Entity;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Edms.Kore.ElasticSearch;
 
 namespace Edms.Kore
 {
-    [ElasticsearchType(Name="ocr_document")]
-    public class OCR_DocumentType
-    {
-        [Text] public string FileHash { get; set; }
-        [Text] public string Folder { get; set; }
-        [Text] public string FileName { get; set; }
-        [Text] public string Content { get; set; }
-    }
+
 
     public class Program
     {
+        public static ElasticService elastic_service;
         public static void Main(string[] args)
         {
             //PopulateDatabase();
-            ElasticSearch.ElasticClient.Initialize();
-            var ec = new ElasticSearch.ElasticClient();
-            var elastic_service = new ElasticService(ec);
+
 
             //var db_context = new ElasticSearchProxyEntities();
 
@@ -38,6 +28,12 @@ namespace Edms.Kore
 
 
             Console.ReadKey();
+        }
+
+        private static void InitializeElasticService()
+        {
+            ElasticSearch.ElasticClient.Initialize();
+            elastic_service = new ElasticService(new ElasticSearch.ElasticClient());
         }
 
         private static void PopulateDatabase()
