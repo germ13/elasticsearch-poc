@@ -10,22 +10,18 @@ namespace Edms.Kore
 
     public class Program
     {
-        public static ElasticService elastic_service;
+        public static ElasticService elastic_service { get; private set; }
+        public static ElasticSearchProxyEntities db_context = new ElasticSearchProxyEntities();
+
         public static void Main(string[] args)
         {
-            //PopulateDatabase();
+            PopulateDatabase();
 
+            InitializeElasticService();
 
-            //var db_context = new ElasticSearchProxyEntities();
+            IndexElasticSearch();
 
-            //var k = db_context.Documents;
-            //foreach(var k1 in k)
-            //{
-            //    elastic_service.Index(k1);
-            //}
-
-            var k = elastic_service.Search("blue");
-
+            var searchResult = elastic_service.Search("blue");
 
             Console.ReadKey();
         }
@@ -34,6 +30,14 @@ namespace Edms.Kore
         {
             ElasticSearch.ElasticClient.Initialize();
             elastic_service = new ElasticService(new ElasticSearch.ElasticClient());
+        }
+
+        private static void IndexElasticSearch()
+        {
+            foreach (var doc in db_context.Documents)
+            {
+                elastic_service.Index(doc);
+            }
         }
 
         private static void PopulateDatabase()
@@ -71,7 +75,6 @@ namespace Edms.Kore
             }
         }
 
-
         public static string CalculateMD5Hash(string input)
         {
             // step 1, calculate MD5 hash from input
@@ -90,34 +93,5 @@ namespace Edms.Kore
 
             return sb.ToString();
         }
-
-
-        //public static void Initialize()
-        //{
-        //    var _indexName = "cfw_documents";
-
-        //    var _elastic = GetClient();
-
-        //    _elastic.CreateIndex(
-        //        _indexName, 
-        //        i => i
-        //            .Settings(s => s
-        //                .Setting("number_of_shards", 1)
-        //                .Setting("number_of_replicas", 0)));
-
-
-        //    _elastic.Map<OCR_Document>(x => x
-        //        .Index(_indexName)
-        //        .AutoMap());
-        //}
-
-
-        //public static IElasticClient GetClient()
-        //{
-        //    var urlString = new Uri("http://localhost:9200");
-        //    var settings = new ConnectionSettings(urlString).DisableDirectStreaming();
-
-        //    return new Nest.ElasticClient(settings);
-        //}
     }
 }
